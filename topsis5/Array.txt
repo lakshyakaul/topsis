@@ -1,0 +1,63 @@
+TOPSIS SERVICE 
+
+package mcdm.topsis.service;
+
+public class TopsisService {
+	private double[] criteria;
+	private double[] alternatives;
+	private int numOfCriteria; //columns or j
+	private int numOfAlternatives; //rows or i
+	private double[][] criteriaValues;
+	private double[] divisor; //divide to normalize
+	private double[][] normalizedDecisionMatrix;
+	private double[][] weightedNormalizedDecisionMatrix;
+	private double[] idealBest; 
+	private double[] idealWorst;
+	private double[] euclidianDistFromIdealBest; 
+	private double[] euclidianDistFromIdealWorst;
+	private double[] euclidianSum;
+	private double[] performanceScore;
+	private int[] ranks;
+
+
+//multiply with weights using arrays
+	
+	public static double[][] multiplyColumnWise(double[][] array2D, double[] array1D) {
+		  // Check if the number of columns in 2D array matches the length of 1D array
+		  if (array2D[0].length != array1D.length) {
+		    throw new IllegalArgumentException("Number of columns in 2D array must match the length of 1D array");
+		  }
+
+		  int rows = array2D.length;
+		  int cols = array2D[0].length;
+		  double[][] result = new double[rows][cols];
+
+		  // Loop through each row of the 2D array
+		  for (int i = 0; i < rows; i++) {
+		    // Loop through each element in the column
+		    for (int j = 0; j < cols; j++) {
+		      result[i][j] = array2D[i][j] * array1D[j];
+		    }
+		  }
+
+		  return result;
+		}
+	
+	//example
+	double[][] array2D = {{1, 2, 3}, {4, 5, 6}};
+	double[] array1D = {10, 20, 30};
+
+	double[][] result = multiplyColumnWise(array2D, array1D);
+
+//  This specific method takes an Object[] (array of objects) as input, 
+//	which in your case is the result array containing a 2D array of doubles.
+//	Deep in this context refers to the fact that it will traverse through
+//	nested arrays and provide a string representation of all elements,
+//	unlike the standard toString() method which might only show the top-level information.
+	
+	System.out.println(Arrays.deepToString(result));
+//  Output: [[10.0, 40.0, 90.0], [40.0, 100.0, 180.0]]
+
+
+
+

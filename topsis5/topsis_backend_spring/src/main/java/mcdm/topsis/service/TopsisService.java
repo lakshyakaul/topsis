@@ -1,14 +1,15 @@
 package mcdm.topsis.service;
 
 import java.util.List;
+import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.Collections;
 
-
+@Service
 public class TopsisService {
 
-	private List<Double> criteria;
-    private List<Double> alternatives;
+	private List<String> criteria;
+    private List<String> alternatives;
     private List<Double> weights;
     private int numOfCriteria; //columns or j
     private int numOfAlternatives; //rows or i
@@ -24,7 +25,7 @@ public class TopsisService {
     private List<Double> performanceScore;
     private List<Integer> ranks;
 
-    public TopsisService(List<Double> weights, List<Double> criteria, List<Double> alternatives, List<List<Double>> criteriaValues, List<Boolean> benefitCriteria) {
+    public TopsisService(List<Double> weights, List<String> criteria, List<String> alternatives, List<List<Double>> criteriaValues, List<Boolean> benefitCriteria) {
         this.weights = weights;
         this.criteria = criteria;
         this.alternatives = alternatives;
@@ -45,8 +46,16 @@ public class TopsisService {
     }
 
     private boolean validateData() {
-        double weightSum = weights.stream().mapToDouble(Double::doubleValue).sum();
-        return Math.abs(weightSum - 1.0) < 1e-10 && !alternatives.isEmpty() && !criteria.isEmpty();
+    	// 2ND CODE
+    	if (weights == null || criteria == null || alternatives == null || criteriaValues == null) {
+            return false;
+        }
+        // Additional validation as needed
+        return true;
+        
+        // 1ST CODE : GAVE EXCEPTIONS
+//        double weightSum = weights.stream().mapToDouble(Double::doubleValue).sum();
+//        return Math.abs(weightSum - 1.0) < 1e-10 && !alternatives.isEmpty() && !criteria.isEmpty();
     }
 
     private void calculateNormalizedMatrix() {

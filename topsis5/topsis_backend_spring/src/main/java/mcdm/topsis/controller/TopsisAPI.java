@@ -29,22 +29,22 @@ import java.util.Arrays;
 //
 //        // alternatives stores the URL not the data
 //        // doubleArray stores the data that was sent
-//        String alternativesURL = "http://localost:8080/alternatives";
+//        String alternativesURL = "http://localhost:8080/alternatives";
 //        String[] alternatives = restTemplate.getForObject(alternativesURL, String[].class);
 //
-//        String criteriaURL = "http://localost:8080/criteria";
+//        String criteriaURL = "http://localhost:8080/criteria";
 //        String[] criteria = restTemplate.getForObject(criteriaURL, String[].class);
 //
-//        String criteriaValuesURL = "http://localost:8080/criteriaValues";
+//        String criteriaValuesURL = "http://localhost:8080/criteriaValues";
 //        double[][] criteriaValues = restTemplate.getForObject(criteriaValuesURL, double[][].class);
 //        
 //        String weightsURL = "http://api.example.com/weights";
 //        double[] weights = restTemplate.getForObject(weightsURL, double[].class);
 //        
 //// alternate way to write above 8 lines :
-////	alternatives = restTemplate.getForObject("http://localost:8080/alternatives", String[].class);
-////	criteria = restTemplate.getForObject("http://localost:8080/criteria", String[].class);
-////	criteriaValues = restTemplate.getForObject("http://localost:8080/criteriaValues", double[][].class);
+////	alternatives = restTemplate.getForObject("http://localhost:8080/alternatives", String[].class);
+////	criteria = restTemplate.getForObject("http://localhost:8080/criteria", String[].class);
+////	criteriaValues = restTemplate.getForObject("http://localhost:8080/criteriaValues", double[][].class);
 ////	weights = restTemplate.getForObject("http://api.example.com/weights", double[].class);
 //
 //        // Process and return the fetched data
@@ -61,7 +61,7 @@ import java.util.Arrays;
 //    public String fetchResults() {
 //        RestTemplate restTemplate = new RestTemplate();
 //
-//        String rankURL = "http://localost:8080/rank";
+//        String rankURL = "http://localhost:8080/rank";
 //        double[] rank = restTemplate.getForObject(rankURL, double[].class);
 //
 //        // return the results
@@ -119,13 +119,13 @@ public class TopsisAPI {
     public String sendData() {
         RestTemplate restTemplate = new RestTemplate();
 
-        String alternativesURL = "http://localost:8080/alternatives";
+        String alternativesURL = "http://localhost:8080/alternatives";
         alternatives = Arrays.asList(restTemplate.getForObject(alternativesURL, String[].class));
 
-        String criteriaURL = "http://localost:8080/criteria";
+        String criteriaURL = "http://localhost:8080/criteria";
         criteria = Arrays.asList(restTemplate.getForObject(criteriaURL, String[].class));
 
-        String criteriaValuesURL = "http://localost:8080/criteriaValues";
+        String criteriaValuesURL = "http://localhost:8080/criteriaValues";
         double[][] criteriaValuesArray = restTemplate.getForObject(criteriaValuesURL, double[][].class);
         criteriaValues = new ArrayList<>();
         for (double[] row : criteriaValuesArray) {
@@ -149,7 +149,7 @@ public class TopsisAPI {
     public String fetchResults() {
         RestTemplate restTemplate = new RestTemplate();
 
-        String rankURL = "http://localost:8080/rank";
+        String rankURL = "http://localhost:8080/rank";
         List<Double> rank = Arrays.stream(restTemplate.getForObject(rankURL, double[].class)).boxed().toList();
 
         // return the results

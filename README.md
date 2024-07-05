@@ -8,8 +8,8 @@ for Multiple-Criteria Decision Making (MCDM)
 
 postgres 16 <br>
 spring tool suite 4 <br>
-spring boot 3.3.1 <br>
+spring boot 3.2.7 <br>
 angular 15 <br>
-java 21 <br>
+java 17 <br>
 npm 10.8.1 <br>
 node.js 18 (latest compatible with angular15)

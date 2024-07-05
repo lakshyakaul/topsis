@@ -1,15 +1,92 @@
 package mcdm.topsis.controller;
 
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.client.RestTemplate;
-//import org.springframework.web.bind.annotation.*;
-//import org.springframework.web.client.RestTemplate;
 
+import mcdm.topsis.service.TopsisService;
 import java.util.List;
-import java.util.ArrayList;
-import java.util.Arrays;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+
+@RestController
+@RequestMapping("/api")
+public class TopsisAPI {
+
+    private final TopsisService topsisService;
+
+    public TopsisAPI(TopsisService topsisService) {
+        this.topsisService = topsisService;
+    }
+
+    @PostMapping("/calculate")
+    public ResponseEntity<Object> calculateTopsis(@RequestBody CalculationRequest request) {
+        try {
+            // Extract data from the request object
+            List<Double> weights = request.getWeights();
+            List<String> criteria = request.getCriteria();
+            List<String> alternatives = request.getAlternatives();
+            List<List<Double>> criteriaValues = request.getCriteriaValues();
+            List<Boolean> benefitCriteria = request.getBenefitCriteria();
+
+            // Create TOPSIS service instance and perform calculation
+            TopsisService topsis = new TopsisService(weights, criteria, alternatives, criteriaValues, benefitCriteria);
+
+            // Get the calculated ranks
+            List<Integer> ranks = topsis.getRanks();
+
+            // Return the ranks as response
+            return ResponseEntity.ok(ranks);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error processing request.");
+        }
+    }
+}
+
+
+// 3RD CODE : DIDNT EVEN TEST
+
+//@RestController
+//@RequestMapping("/api/topsis")
+//public class TopsisAPI {
+//
+//    private final TopsisService topsisService;
+//
+//    public TopsisAPI(TopsisService topsisService) {
+//        this.topsisService = topsisService;
+//    }
+//
+//    @PostMapping("/calculate")
+//    public ResponseEntity<Object> calculateTopsis(@RequestBody CalculationRequest request) {
+//        try {
+//            // Extract data from the request object
+//            List<String> alternatives = request.getAlternatives();
+//            List<String> criteria = request.getCriteria();
+//            List<List<Double>> criteriaValues = request.getCriteriaValues();
+//            List<Double> weights = request.getWeights();
+//
+//            // Validate or process the data as needed
+//            // Example validation:
+//            if (alternatives.isEmpty() || criteria.isEmpty() || criteriaValues.isEmpty() || weights.isEmpty()) {
+//                return ResponseEntity.badRequest().body("Invalid input data.");
+//            }
+//
+//            // Call TOPSIS service to perform calculation
+//            TopsisResult result = topsisService.calculateTopsis(alternatives, criteria, criteriaValues, weights);
+//
+//            // Return the result
+//            return ResponseEntity.ok(result); // Assuming TopsisResult has appropriate fields
+//        } catch (Exception e) {
+//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error processing request.");
+//        }
+//    }
+//}
+
+
+// FIRST CODE : NOT WORKING
 
 //@RestController
 //public class TopsisAPI {
@@ -106,85 +183,86 @@ import java.util.Arrays;
 //    
 //}
 
+// WORKING : 2ND CODE
 
-@RestController
-public class TopsisAPI {
-
-    private List<String> alternatives; // Member variable to store alternatives
-    private List<String> criteria; // Member variable to store criteria
-    private List<List<Double>> criteriaValues; // Member variable to store decision matrix
-    private List<Double> weights; // Member variable to store weights
-
-    @PostMapping("/calculate")
-    public String sendData() {
-        RestTemplate restTemplate = new RestTemplate();
-
-        String alternativesURL = "http://localhost:8080/alternatives";
-        alternatives = Arrays.asList(restTemplate.getForObject(alternativesURL, String[].class));
-
-        String criteriaURL = "http://localhost:8080/criteria";
-        criteria = Arrays.asList(restTemplate.getForObject(criteriaURL, String[].class));
-
-        String criteriaValuesURL = "http://localhost:8080/criteriaValues";
-        double[][] criteriaValuesArray = restTemplate.getForObject(criteriaValuesURL, double[][].class);
-        criteriaValues = new ArrayList<>();
-        for (double[] row : criteriaValuesArray) {
-            criteriaValues.add(Arrays.stream(row).boxed().toList());
-        }
-
-        String weightsURL = "http://api.example.com/weights";
-        weights = Arrays.stream(restTemplate.getForObject(weightsURL, double[].class)).boxed().toList();
-
-        // Process and return the fetched data
-        StringBuilder result = new StringBuilder();
-        result.append("Alternatives: ").append(alternatives).append("\n");
-        result.append("Criteria: ").append(criteria).append("\n");
-        result.append("Decision matrix: ").append(criteriaValues).append("\n");
-        result.append("Weights array: ").append(weights).append("\n");
-
-        return "Data sent successfully.";
-    }
-
-    @GetMapping("/results")
-    public String fetchResults() {
-        RestTemplate restTemplate = new RestTemplate();
-
-        String rankURL = "http://localhost:8080/rank";
-        List<Double> rank = Arrays.stream(restTemplate.getForObject(rankURL, double[].class)).boxed().toList();
-
-        // return the results
-        return "Double List: " + rank;
-    }
-
-    public List<String> getAlternatives() {
-        return alternatives;
-    }
-
-    public void setAlternatives(List<String> alternatives) {
-        this.alternatives = alternatives;
-    }
-
-    public List<String> getCriteria() {
-        return criteria;
-    }
-
-    public void setCriteria(List<String> criteria) {
-        this.criteria = criteria;
-    }
-
-    public List<List<Double>> getCriteriaValues() {
-        return criteriaValues;
-    }
-
-    public void setCriteriaValues(List<List<Double>> criteriaValues) {
-        this.criteriaValues = criteriaValues;
-    }
-
-    public List<Double> getWeights() {
-        return weights;
-    }
-
-    public void setWeights(List<Double> weights) {
-        this.weights = weights;
-    }
-}
+//@RestController
+//public class TopsisAPI {
+//
+//    private List<String> alternatives; // Member variable to store alternatives
+//    private List<String> criteria; // Member variable to store criteria
+//    private List<List<Double>> criteriaValues; // Member variable to store decision matrix
+//    private List<Double> weights; // Member variable to store weights
+//
+//    @PostMapping("/calculate")
+//    public String sendData() {
+//        RestTemplate restTemplate = new RestTemplate();
+//
+//        String alternativesURL = "http://localhost:8080/alternatives";
+//        alternatives = Arrays.asList(restTemplate.getForObject(alternativesURL, String[].class));
+//
+//        String criteriaURL = "http://localhost:8080/criteria";
+//        criteria = Arrays.asList(restTemplate.getForObject(criteriaURL, String[].class));
+//
+//        String criteriaValuesURL = "http://localhost:8080/criteriaValues";
+//        double[][] criteriaValuesArray = restTemplate.getForObject(criteriaValuesURL, double[][].class);
+//        criteriaValues = new ArrayList<>();
+//        for (double[] row : criteriaValuesArray) {
+//            criteriaValues.add(Arrays.stream(row).boxed().toList());
+//        }
+//
+//        String weightsURL = "http://localhost:8080/weights";
+//        weights = Arrays.stream(restTemplate.getForObject(weightsURL, double[].class)).boxed().toList();
+//
+//        // Process and return the fetched data
+//        StringBuilder result = new StringBuilder();
+//        result.append("Alternatives: ").append(alternatives).append("\n");
+//        result.append("Criteria: ").append(criteria).append("\n");
+//        result.append("Decision matrix: ").append(criteriaValues).append("\n");
+//        result.append("Weights array: ").append(weights).append("\n");
+//
+//        return "Data sent successfully.";
+//    }
+//
+//    @GetMapping("/results")
+//    public String fetchResults() {
+//        RestTemplate restTemplate = new RestTemplate();
+//
+//        String rankURL = "http://localhost:8080/rank";
+//        List<Double> rank = Arrays.stream(restTemplate.getForObject(rankURL, double[].class)).boxed().toList();
+//
+//        // return the results
+//        return "Double List: " + rank;
+//    }
+//
+//    public List<String> getAlternatives() {
+//        return alternatives;
+//    }
+//
+//    public void setAlternatives(List<String> alternatives) {
+//        this.alternatives = alternatives;
+//    }
+//
+//    public List<String> getCriteria() {
+//        return criteria;
+//    }
+//
+//    public void setCriteria(List<String> criteria) {
+//        this.criteria = criteria;
+//    }
+//
+//    public List<List<Double>> getCriteriaValues() {
+//        return criteriaValues;
+//    }
+//
+//    public void setCriteriaValues(List<List<Double>> criteriaValues) {
+//        this.criteriaValues = criteriaValues;
+//    }
+//
+//    public List<Double> getWeights() {
+//        return weights;
+//    }
+//
+//    public void setWeights(List<Double> weights) {
+//        this.weights = weights;
+//    }
+//}
